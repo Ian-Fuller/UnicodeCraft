@@ -27,15 +27,12 @@ namespace UnicodeCraft
         public int damage;
         public string[] toolsRequired;
         public int[] damageBoosts;
-        //Action properties
-        public char[,] itemSprites;
-        public int[,,] spriteOffsets;
-        public string[,] itemFGColors;
-        public string[,] itemBGColors;
+        //Action
+        public Action<Grid, Node, Player> action;
 
         public Item()
         {
-
+            
         }
         public Item(
             string itemName, List<string> itemTags, string itemDescription, int itemQuantity,
@@ -44,7 +41,7 @@ namespace UnicodeCraft
             bool conceal, bool walkThrough, bool transparent,
             int lightLevel,
             int durability, int damage, string[] toolsRequired, int[] damageBoosts,
-            char[,] itemSprites, int[,,] spriteOffsets, string[,] itemFGColors, string[,] itemBGColors
+            Action<Grid, Node, Player> action
         )
         {
             //Information
@@ -68,11 +65,8 @@ namespace UnicodeCraft
             this.damage = damage;
             this.toolsRequired = toolsRequired;
             this.damageBoosts = damageBoosts;
-            //Action properties
-            this.itemSprites = itemSprites;
-            this.spriteOffsets = spriteOffsets;
-            this.itemFGColors = itemFGColors;
-            this.itemBGColors = itemBGColors;
+            //Action
+            this.action = action;
     }
 
         //Makes an item a copy of an item so they can be in a different state than the original
@@ -99,19 +93,6 @@ namespace UnicodeCraft
             damage = original.damage;
             toolsRequired = original.toolsRequired;
             damageBoosts = original.damageBoosts;
-            //Action properties
-            itemSprites = original.itemSprites;
-            spriteOffsets = original.spriteOffsets;
-            itemFGColors = original.itemFGColors;
-            itemBGColors = original.itemBGColors;
-        }
-        //For useable and animated items
-        public void Action(ref Grid gameGrid, int playerRow, int playerColumn)
-        {
-            if(itemTags.Contains("Tool"))
-            {
-                Actions.UseTool(ref gameGrid, this, playerRow, playerColumn);
-            }
         }
         //Displays item and changes colors beforehand
         public void DisplayItem()
@@ -130,83 +111,15 @@ namespace UnicodeCraft
         }
     }
 
-    /*
-    public class Tool : Item
-    {
-        public char[,] itemSprites;
-        public int[,,] spriteOffsets;
-        public string[,] itemFGColors;
-        public string[,] itemBGColors;
-
-        public Tool() : base()
-        {
-
-        }
-        public Tool(
-            string itemName, string itemTag, string itemDescription, int itemQuantity,
-            char inventoryIcon, char gridIcon,
-            string itemFGColor, string itemBGColor,
-            bool conceal, bool walkThrough, bool transparent,
-            int lightLevel,
-            int durability, int damage, string[] toolsRequired, int[] damageBoosts,
-            char[,] itemSprites, int[,,] spriteOffsets, string[,] itemFGColors, string[,] itemBGColors
-        ) : base(
-            itemName, itemTag, itemDescription, itemQuantity,
-            inventoryIcon, gridIcon,
-            itemFGColor, itemBGColor,
-            conceal, walkThrough, transparent,
-            lightLevel,
-            durability, damage, toolsRequired, damageBoosts
-        )
-        {
-            this.itemSprites = itemSprites;
-            this.spriteOffsets = spriteOffsets;
-            this.itemFGColors = itemFGColors;
-            this.itemBGColors = itemBGColors;
-        }
-
-        public override void GetCopyOf(Item original)
-        {
-            base.GetCopyOf(original);
-            Tool tempTool = (Tool)original;
-
-            itemSprites = tempTool.itemSprites;
-            spriteOffsets = tempTool.spriteOffsets;
-            itemFGColors = tempTool.itemFGColors;
-            itemBGColors = tempTool.itemBGColors;
-        }
-        public override void Action(ref Grid gameGrid, int playerRow, int playerColumn)
-        {
-            for(int i = 0; i < itemSprites.Length; i++)
-            {
-                for(int j = 0; j < j + 1; j++)
-                {
-                    try
-                    {
-                        if (gameGrid.topLayer[playerRow + spriteOffsets[i, j, 0], playerColumn + spriteOffsets[i, j, 1]].item.itemName == ItemLibrary.AIR.itemName)
-                        {
-                            gameGrid.topLayer[playerRow + spriteOffsets[i, j, 0], playerColumn + spriteOffsets[i, j, 1]].item.gridIcon = itemSprites[i, j];
-                        }
-                    }
-                    catch(Exception ex)
-                    {
-                        //Ignore IOOB error
-                    }
-                }
-            }
-        }
-    }
-    */
-
     public class ItemLibrary
     {
         public static Item AIR = new Item(
-            "Air", new List<string> { "" } , "The absence of an item - can be moved through.", 0, //Name, Desc., Default quantity
+            "Air", new List<string> { "" }, "The absence of an item - can be moved through.", 0, //Name, Desc., Default quantity
             ' ', ' ', //Inventory icon, Grid icon
             "Gray", "", //FG color, BG color
             false, true, true, 0, //Conceal, Walk through, Transparent, Light level
             0, 1, new string[] { "None" }, new int[] { 0 }, //Durability, Damage, Resistances, Resistance values
-            null, null, null, null
+            null
         );
         public static Item STONE = new Item(
             "Stone", new List<string> { "" }, "Durable building block and crafting material.", 1,
@@ -214,7 +127,7 @@ namespace UnicodeCraft
             "Gray", "Gray",
             false, false, false, 0,
             150, 15, new string[] { "Pickaxe", "Axe", "Sword" }, new int[] { 10, 4, 2 },
-            null, null, null, null
+            null
         );
         public static Item COAL_ORE = new Item(
             "Coal Ore", new List<string> { "" }, "Fuel source", 1,
@@ -222,7 +135,7 @@ namespace UnicodeCraft
             "Black", "Gray",
             false, false, false, 0,
             150, 15, new string[] { "Pickaxe", "Axe", "Sword" }, new int[] { 10, 4, 2 },
-            null, null, null, null
+            null
         );
         public static Item WOODEN_LOG = new Item(
             "Wooden Log", new List<string> { "" }, "Can be used to make crafting materials.", 1,
@@ -230,7 +143,7 @@ namespace UnicodeCraft
             "DarkRed", "",
             false, false, false, 0,
             100, 10, new string[] { "Axe", "Sword", "Pickaxe" }, new int[] { 5, 2, 1 },
-            null, null, null, null
+            null
         );
         public static Item TREE_LEAVES = new Item(
             "Tree Leaves", new List<string> { "" }, "Can be walked under. Anything under the leaves will be concealed.", 1,
@@ -238,7 +151,7 @@ namespace UnicodeCraft
             "DarkGreen", "",
             true, true, true, 0,
             0, 1, new string[] { "None" }, new int[] { 0 },
-            null, null, null, null
+            null
         );
         public static Item WOODEN_PLANK = new Item(
             "Wooden Plank", new List<string> { "" }, "Building and crafting material.", 1,
@@ -246,7 +159,7 @@ namespace UnicodeCraft
             "DarkYellow", "Yellow",
             false, false, false, 0,
             100, 10, new string[] { "Axe", "Sword", "Pickaxe" }, new int[] { 5, 2, 1 },
-            null, null, null, null
+            null
         );
         public static Item APPLE = new Item(
             "Apple", new List<string> { "Food" }, "Food item - can be used to restore satiation.", 1,
@@ -254,7 +167,7 @@ namespace UnicodeCraft
             "Red", "",
             false, true, true, 0,
             1, 1, new string[] { "All" }, new int[] { 1 },
-            null, null, null, null
+            null // replenish satiation
         );
         public static Item TORCH = new Item(
             "Torch", new List<string> { "Light Source" }, "Used for lighting at night and in dark areas.", 1,
@@ -262,7 +175,7 @@ namespace UnicodeCraft
             "DarkRed", "",
             false, true, true, 3,
             1, 1, new string[] { "All" }, new int[] { 1 },
-            null, null, null, null
+            null // possibly make this determine lighting behavior
         );
         public static Item STICK = new Item(
             "Stick", new List<string> { "" }, "Crafting material for tools and other things.", 1,
@@ -270,7 +183,7 @@ namespace UnicodeCraft
             "DarkRed", "",
             false, true, true, 0,
             1, 1, new string[] { "All" }, new int[] { 1 },
-            null, null, null, null
+            null
         );
         public static Item FLINT = new Item(
             "Flint", new List<string> { "Axe" }, "Tool and crafting material.", 1,
@@ -278,18 +191,25 @@ namespace UnicodeCraft
             "DarkGray", "",
             false, true, true, 0,
             1, 5, new string[] { "All" }, new int[] { 1 },
-            null, null, null, null
+            null
         );
         public static Item FLINT_PICKAXE = new Item(
             "Flint Pickaxe", new List<string> { "Tool", "Pickaxe" }, "Used for mining stone.", 1,
             CharLibrary.pickaxe, CharLibrary.pickaxe,
             "DarkGray", "",
             false, true, true, 0,
-            1, 5, new string[] { "All " }, new int[] { 1 },
-            new char[,] { { CharLibrary.angleLL, '/' }, { CharLibrary.lineH, '|' }, { CharLibrary.angleLR, '\\' } },
-            new int[,,] { { { -2, -1 }, { -1, 0 } }, { { -2, 0 }, { -1, 0 } }, { { -2, 1 }, { -1, 0 } } },
-            new string[,] { { "Dark Gray", "DarkRed" }, { "Dark Gray", "DarkRed" }, { "Dark Gray", "DarkRed" } },
-            new string[,] { { "", "" }, { "", "" }, { "", "" } }
+            1, 5, new string[] { "All" }, new int[] { 1 },
+            null
+        );
+        public static Item MAGIC_WAND = new Item(
+            "Magic Wand", new List<string> { "" }, "It's a mystery.", 1,
+            '/', '/',
+            "Magenta", "",
+            false, true, true, 0,
+            1, 1000, new string[] { "All" }, new int[] { 1 },
+            (grid, gridCoordinate, player) => {
+                grid.Clear();
+            }
         );
 
         public static Item[] FullList = {
@@ -303,39 +223,8 @@ namespace UnicodeCraft
             TORCH,
             STICK,
             FLINT,
-            FLINT_PICKAXE
+            FLINT_PICKAXE,
+            MAGIC_WAND
         };
-    }
-
-    public class Actions
-    {
-        public static void UseTool(ref Grid gameGrid, Item tool, int playerRow, int playerColumn)
-        {
-            //gameGrid.topLayer[playerRow + tool.spriteOffsets[0, 0, 0], playerColumn + tool.spriteOffsets[0, 0, 1]].item = new Item();
-            //gameGrid.topLayer[playerRow + tool.spriteOffsets[0, 0, 0], playerColumn + tool.spriteOffsets[0, 0, 1]].item.GetCopyOf(ItemLibrary.AIR);
-            //gameGrid.topLayer[playerRow + tool.spriteOffsets[0, 0, 0], playerColumn + tool.spriteOffsets[0, 0, 1]].item.gridIcon = '/';
-
-            for (int i = 0; i < tool.itemSprites.Length; i++)
-            {
-                for (int j = 0; j < tool.spriteOffsets.Length; j++)
-                {
-                    try
-                    {
-                        if (gameGrid.gridCoordinate[playerRow + tool.spriteOffsets[i, j, 0], playerColumn + tool.spriteOffsets[i, j, 1]].item.itemName == ItemLibrary.AIR.itemName)
-                        {
-                            gameGrid.gridCoordinate[playerRow + tool.spriteOffsets[i, j, 0], playerColumn + tool.spriteOffsets[i, j, 1]].item.gridIcon = tool.itemSprites[i, j];
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        break;
-                    }
-                }
-                //for(int j = 0; j < 1000000; j++)
-                //{
-
-                //}
-            }
-        }
     }
 }

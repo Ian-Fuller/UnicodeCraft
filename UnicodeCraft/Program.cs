@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 
+/*
+To-Do list:
+- Figure out where I left off. I suspect that I got stuck because I overcomplicated my ideas for tools
+- Replace PlaceAndDestroy() with UseItem()
+- Replace strings with enums where possible (in ItemLibrary primarily)
+- Make the node destruction and placement happen in the grid class, as lambda expressions cannot recieve values by reference
+*/
+
 //Things to add:
 //-Concealment from objects
 //-Whether or not an object can be moved through
 //-Make tree leaves render in the right place when adjacent
 //-Add to items: FG ang BG color, separate grid and inventory sprites, descriptions
-
-//-Fix Shift+S at the beginning of program bug
-//-Fix coordinates in grid being displayed in 10s place when outside of 0, 0 grid
-
-//-Add more comments
-//-Precalculate more variables
 
 namespace UnicodeCraft
 {

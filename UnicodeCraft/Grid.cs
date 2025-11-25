@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace UnicodeCraft
@@ -356,6 +357,17 @@ namespace UnicodeCraft
             Console.BackgroundColor = ConsoleColor.Black;
 
             player.DisplayInventory();
+        }
+
+        public void Clear()
+        {
+            for (int row = 0; row < GRID_HEIGHT; row++)
+            {
+                for (int column = 0; column < GRID_WIDTH; column++)
+                {
+                    gridCoordinate[row, column].item.GetCopyOf(ItemLibrary.AIR);
+                }
+            }
         }
     }
 }

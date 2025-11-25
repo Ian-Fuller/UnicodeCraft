@@ -32,6 +32,7 @@ namespace UnicodeCraft
             {
                 inventory[i] = ItemLibrary.AIR;
             }
+            inventory[0] = ItemLibrary.MAGIC_WAND;
         }
 
         public void SetStart()
@@ -57,9 +58,8 @@ namespace UnicodeCraft
             }
             else
             {
-                Random rand = new Random();
-                row = rand.Next(1, Grid.GRID_HEIGHT);
-                column = rand.Next(1, Grid.GRID_WIDTH);
+                row = Grid.GRID_HEIGHT / 2;
+                column = Grid.GRID_WIDTH / 2;
                 firstGeneration = false;
             }
         }
@@ -96,10 +96,15 @@ namespace UnicodeCraft
             }
         }
 
-        public void PlaceAndDestroy(ref Node gridCoordinate)
+        public void Action(ref Grid gameGrid, ref Node gridCoordinate)
         {
+            //Uses the item's action ability if it has one
+            if (inventory[inventoryPosition].action != null)
+            {
+                inventory[inventoryPosition].action(gameGrid, gridCoordinate, this);
+            }
             //Places item if air
-            if (gridCoordinate.item.itemName == ItemLibrary.AIR.itemName)
+            else if (gridCoordinate.item.itemName == ItemLibrary.AIR.itemName)
             {
                 gridCoordinate.item = new Item();
                 gridCoordinate.item.GetCopyOf(inventory[inventoryPosition]);
@@ -166,37 +171,21 @@ namespace UnicodeCraft
                     column++;
                 }
                 //block destruction/placement
-                else if (inputKey == 'W')
+                else if (inputKey == 'i')
                 {
-                    PlaceAndDestroy(ref gameGrid.gridCoordinate[row - 1, column]);
+                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row - 1, column]);
                 }
-                else if (inputKey == 'A')
+                else if (inputKey == 'j')
                 {
-                    PlaceAndDestroy(ref gameGrid.gridCoordinate[row, column - 1]);
+                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row, column - 1]);
                 }
-                else if (inputKey == 'S')
+                else if (inputKey == 'k')
                 {
-                    PlaceAndDestroy(ref gameGrid.gridCoordinate[row + 1, column]);
+                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row + 1, column]);
                 }
-                else if (inputKey == 'D')
+                else if (inputKey == 'l')
                 {
-                    PlaceAndDestroy(ref gameGrid.gridCoordinate[row, column + 1]);
-                }
-                else if(inputKey == '2')
-                {
-                    inventory[inventoryPosition].Action(ref gameGrid, row, column);
-                }
-                else if (inputKey == 4)
-                {
-
-                }
-                else if (inputKey == 6)
-                {
-
-                }
-                else if (inputKey == 8)
-                {
-
+                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row, column + 1]);
                 }
                 else if (inputKey == 'e')
                 {
@@ -302,51 +291,6 @@ namespace UnicodeCraft
 
         public void DisplayInventory()
         {
-            //int inventoryIndex = 0;
-            //Console.Write(CharLibrary.upperLeftCorner); //top border
-            //for (int i = 0; i < 19; i++)
-            //{
-            //    Console.Write(CharLibrary.horizontal + "" + CharLibrary.horizontalDown);
-            //}
-            //Console.Write(CharLibrary.horizontal + "" + CharLibrary.upperRightCorner + "\n");
-            //for (int i = 0; i < 20; i++) //row 1
-            //{
-            //    Console.Write(CharLibrary.vertical);
-            //    if (inventoryIndex == inventoryPosition)
-            //    {
-            //        Console.BackgroundColor = ConsoleColor.DarkMagenta;
-            //    }
-            //    ItemLibrary.DisplayItem(inventory[inventoryIndex]);
-            //    Console.ForegroundColor = ConsoleColor.Gray;
-            //    Console.BackgroundColor = ConsoleColor.Black;
-            //    inventoryIndex++;
-            //}
-            //Console.Write(CharLibrary.vertical + "\n" + CharLibrary.verticalRight); //middle border
-            //for (int i = 0; i < 19; i++)
-            //{
-            //    Console.Write(CharLibrary.horizontal + "" + CharLibrary.crossroads);
-            //}
-            //Console.Write(CharLibrary.horizontal + "" + CharLibrary.verticalLeft + "\n");
-            //for (int i = 0; i < 20; i++) //row 2
-            //{
-            //    Console.Write(CharLibrary.vertical);
-            //    if (inventoryIndex == inventoryPosition)
-            //    {
-            //        Console.BackgroundColor = ConsoleColor.DarkMagenta;
-            //    }
-            //    ItemLibrary.DisplayItem(inventory[inventoryIndex]);
-            //    Console.ForegroundColor = ConsoleColor.Gray;
-            //    Console.BackgroundColor = ConsoleColor.Black;
-            //    inventoryIndex++;
-            //}
-            //Console.Write(CharLibrary.vertical + "\n" + CharLibrary.lowerLeftCorner); //bottom border
-            //for (int i = 0; i < 19; i++)
-            //{
-            //    Console.Write(CharLibrary.horizontal + "" + CharLibrary.horizontalUp);
-            //}
-            //Console.Write(CharLibrary.horizontal + "" + CharLibrary.lowerRightCorner + "\n");
-            int inventoryIndex = 0;
-
             //Upper border
             Console.Write(CharLibrary.verticalRight); //top border
             for (int i = 0; i < 10; i++)
@@ -364,7 +308,6 @@ namespace UnicodeCraft
             for (int i = 0; i < 10; i++)
             {
                 inventory[i].DisplayItem();
-                //ItemLibrary.DisplayItem(inventory[i]);
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.Write(CharLibrary.vertical);
