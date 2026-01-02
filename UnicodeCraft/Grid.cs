@@ -232,8 +232,6 @@ namespace UnicodeCraft
                     }
                     else
                     {
-                        //topLayer[row, column].item = new Item();
-                        //topLayer[row, column].item.GetCopyOf(ItemLibrary.AIR);
                         topLayer[row, column].item = ItemLibrary.AIR;
                     }
                 }
@@ -283,7 +281,6 @@ namespace UnicodeCraft
                     else if(topLayer[row, column].item != ItemLibrary.AIR)
                     {
                         topLayer[row, column].item.DisplayItem();
-                        //ItemLibrary.DisplayItem(topLayer[row, column].item);
                     }
                     //Player
                     else if (player.row == row && player.column == column)
@@ -296,7 +293,6 @@ namespace UnicodeCraft
                     else
                     {
                         gridCoordinate[row, column].item.DisplayItem();
-                        //ItemLibrary.DisplayItem(gridCoordinate[row, column].item);
                     }
                 }
 
@@ -358,6 +354,28 @@ namespace UnicodeCraft
 
             player.DisplayInventory();
         }
+
+        public void PlaceNode(int[] coordinates, Item nodeType)
+        {
+            gridCoordinate[coordinates[0], coordinates[1]].item = nodeType;
+        }
+
+        public void RemoveNode(int[] coordinates)
+        {
+            gridCoordinate[coordinates[0], coordinates[1]].item = ItemLibrary.AIR;
+        }
+
+        //public Item DamageNode(int[] coordinates, int damage)
+        //{
+        //    gridCoordinate[coordinates[0], coordinates[1]].item.durability -= damage;
+        //    if (gridCoordinate[coordinates[0], coordinates[1]].item.durability <= 0)
+        //    {
+                
+        //        gridCoordinate[coordinates[0], coordinates[1]].item = ItemLibrary.AIR;
+        //        return 
+        //    }
+        //    return ItemLibrary.AIR;
+        //}
 
         public void Clear()
         {

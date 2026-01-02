@@ -3,17 +3,12 @@ using System.Collections.Generic;
 
 /*
 To-Do list:
-- Figure out where I left off. I suspect that I got stuck because I overcomplicated my ideas for tools
-- Replace PlaceAndDestroy() with UseItem()
-- Replace strings with enums where possible (in ItemLibrary primarily)
 - Make the node destruction and placement happen in the grid class, as lambda expressions cannot recieve values by reference
+- When an items name is printed, it needs to be decapitalized, have the underscores replaced with spaces, and have the first letter of each word recapitalized
+- Add some more items and tools
+- Add zombies
+- Add concealment from zombie pathfinding while the player is under leaves
 */
-
-//Things to add:
-//-Concealment from objects
-//-Whether or not an object can be moved through
-//-Make tree leaves render in the right place when adjacent
-//-Add to items: FG ang BG color, separate grid and inventory sprites, descriptions
 
 namespace UnicodeCraft
 {

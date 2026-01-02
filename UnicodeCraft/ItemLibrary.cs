@@ -7,16 +7,15 @@ namespace UnicodeCraft
     public class Item
     {
         //Information
-        public string itemName;
-        public List<string> itemTags;
-        public string itemDescription;
+        public ItemLibrary.ItemTypes itemName;
+        public ItemLibrary.ItemTags[] itemTags;
         public int itemQuantity;
         //Icons
         public char inventoryIcon;
         public char gridIcon;
         //Colors
-        public string itemFGColor;
-        public string itemBGColor;
+        public ConsoleColor itemFGColor;
+        public ConsoleColor itemBGColor;
         //Special properties
         public bool conceal;
         public bool walkThrough;
@@ -25,7 +24,7 @@ namespace UnicodeCraft
         //Durability
         public int durability;
         public int damage;
-        public string[] toolsRequired;
+        public ItemLibrary.ItemTags[] toolsRequired;
         public int[] damageBoosts;
         //Action
         public Action<Grid, Node, Player> action;
@@ -35,19 +34,18 @@ namespace UnicodeCraft
             
         }
         public Item(
-            string itemName, List<string> itemTags, string itemDescription, int itemQuantity,
+            ItemLibrary.ItemTypes itemName, ItemLibrary.ItemTags[] itemTags, int itemQuantity,
             char inventoryIcon, char gridIcon,
-            string itemFGColor, string itemBGColor,
+            ConsoleColor itemFGColor, ConsoleColor itemBGColor,
             bool conceal, bool walkThrough, bool transparent,
             int lightLevel,
-            int durability, int damage, string[] toolsRequired, int[] damageBoosts,
+            int durability, int damage, ItemLibrary.ItemTags[] toolsRequired, int[] damageBoosts,
             Action<Grid, Node, Player> action
         )
         {
             //Information
             this.itemName = itemName;
             this.itemTags = itemTags;
-            this.itemDescription = itemDescription;
             this.itemQuantity = itemQuantity;
             //Icons
             this.inventoryIcon = inventoryIcon;
@@ -67,7 +65,7 @@ namespace UnicodeCraft
             this.damageBoosts = damageBoosts;
             //Action
             this.action = action;
-    }
+        }
 
         //Makes an item a copy of an item so they can be in a different state than the original
         public virtual void GetCopyOf(Item original)
@@ -75,7 +73,6 @@ namespace UnicodeCraft
             //Information
             itemName = original.itemName;
             itemTags = original.itemTags;
-            itemDescription = original.itemDescription;
             itemQuantity = original.itemQuantity;
             //Icons
             inventoryIcon = original.inventoryIcon;
@@ -97,15 +94,15 @@ namespace UnicodeCraft
         //Displays item and changes colors beforehand
         public void DisplayItem()
         {
-            if (itemBGColor == "") //"Transparent" items
+            if (transparent) //"Transparent" items
             {
-                QuickColor.changeFG(itemFGColor);
+                Console.ForegroundColor = itemFGColor;
                 Console.Write(gridIcon);
             }
             else //Full blocks
             {
-                QuickColor.changeFG(itemFGColor);
-                QuickColor.changeBG(itemBGColor);
+                Console.ForegroundColor = itemFGColor;
+                Console.BackgroundColor = itemBGColor;
                 Console.Write(gridIcon);
             }
         }
@@ -114,99 +111,99 @@ namespace UnicodeCraft
     public class ItemLibrary
     {
         public static Item AIR = new Item(
-            "Air", new List<string> { "" }, "The absence of an item - can be moved through.", 0, //Name, Desc., Default quantity
-            ' ', ' ', //Inventory icon, Grid icon
-            "Gray", "", //FG color, BG color
-            false, true, true, 0, //Conceal, Walk through, Transparent, Light level
-            0, 1, new string[] { "None" }, new int[] { 0 }, //Durability, Damage, Resistances, Resistance values
-            null
+            ItemTypes.AIR, new ItemTags[] { ItemTags.NONE }, 0, // Name, Tags, Default quantity
+            ' ', ' ',                                           // Inventory icon, Grid icon
+            ConsoleColor.Black, ConsoleColor.Black,             // FG color, BG color
+            false, true, true, 0,                               // Conceal, Walk through, Transparent, Light level
+            0, 1, new ItemTags[] { }, new int[] { 0 },          // Durability, Damage, Resistances, Resistance values
+            null                                                // Special action
         );
         public static Item STONE = new Item(
-            "Stone", new List<string> { "" }, "Durable building block and crafting material.", 1,
+            ItemTypes.STONE, new ItemTags[] { }, 1,
             ' ', ' ',
-            "Gray", "Gray",
+            ConsoleColor.Gray, ConsoleColor.Gray,
             false, false, false, 0,
-            150, 15, new string[] { "Pickaxe", "Axe", "Sword" }, new int[] { 10, 4, 2 },
+            150, 15, new ItemTags[] { ItemTags.PICKAXE, ItemTags.AXE, ItemTags.SWORD }, new int[] { 10, 4, 2 },
             null
         );
         public static Item COAL_ORE = new Item(
-            "Coal Ore", new List<string> { "" }, "Fuel source", 1,
+            ItemTypes.COAL_ORE, new ItemTags[] { }, 1,
             CharLibrary.leavesThin, CharLibrary.leavesThin,
-            "Black", "Gray",
+            ConsoleColor.Black, ConsoleColor.Gray,
             false, false, false, 0,
-            150, 15, new string[] { "Pickaxe", "Axe", "Sword" }, new int[] { 10, 4, 2 },
+            150, 15, new ItemTags[] { ItemTags.PICKAXE, ItemTags.AXE, ItemTags.SWORD }, new int[] { 10, 4, 2 },
             null
         );
         public static Item WOODEN_LOG = new Item(
-            "Wooden Log", new List<string> { "" }, "Can be used to make crafting materials.", 1,
+            ItemTypes.WOODEN_LOG, new ItemTags[] { }, 1,
             CharLibrary.trunkThin, CharLibrary.trunkThin,
-            "DarkRed", "",
-            false, false, false, 0,
-            100, 10, new string[] { "Axe", "Sword", "Pickaxe" }, new int[] { 5, 2, 1 },
+            ConsoleColor.DarkRed, ConsoleColor.Black,
+            false, false, true, 0,
+            100, 10, new ItemTags[] { ItemTags.AXE, ItemTags.SWORD, ItemTags.PICKAXE }, new int[] { 5, 2, 1 },
             null
         );
         public static Item TREE_LEAVES = new Item(
-            "Tree Leaves", new List<string> { "" }, "Can be walked under. Anything under the leaves will be concealed.", 1,
+            ItemTypes.TREE_LEAVES, new ItemTags[] { }, 1,
             CharLibrary.leavesThick, CharLibrary.leavesThick,
-            "DarkGreen", "",
+            ConsoleColor.DarkGreen, ConsoleColor.Black,
             true, true, true, 0,
-            0, 1, new string[] { "None" }, new int[] { 0 },
+            0, 1, new ItemTags[] { ItemTags.NONE }, new int[] { 0 },
             null
         );
         public static Item WOODEN_PLANK = new Item(
-            "Wooden Plank", new List<string> { "" }, "Building and crafting material.", 1,
+            ItemTypes.WOODEN_PLANK, new ItemTags[] { }, 1,
             '│', '│',
-            "DarkYellow", "Yellow",
+            ConsoleColor.DarkYellow, ConsoleColor.Yellow,
             false, false, false, 0,
-            100, 10, new string[] { "Axe", "Sword", "Pickaxe" }, new int[] { 5, 2, 1 },
+            100, 10, new ItemTags[] { ItemTags.AXE, ItemTags.SWORD, ItemTags.PICKAXE }, new int[] { 5, 2, 1 },
             null
         );
         public static Item APPLE = new Item(
-            "Apple", new List<string> { "Food" }, "Food item - can be used to restore satiation.", 1,
+            ItemTypes.APPLE, new ItemTags[] { ItemTags.FOOD }, 1,
             CharLibrary.apple, CharLibrary.apple,
-            "Red", "",
+            ConsoleColor.Red, ConsoleColor.Black,
             false, true, true, 0,
-            1, 1, new string[] { "All" }, new int[] { 1 },
+            1, 1, new ItemTags[] { ItemTags.NONE }, new int[] { 1 },
             null // replenish satiation
         );
         public static Item TORCH = new Item(
-            "Torch", new List<string> { "Light Source" }, "Used for lighting at night and in dark areas.", 1,
+            ItemTypes.TORCH, new ItemTags[] { ItemTags.LIGHT_SOURCE }, 1,
             CharLibrary.torch, CharLibrary.torch,
-            "DarkRed", "",
+            ConsoleColor.DarkRed, ConsoleColor.Black,
             false, true, true, 3,
-            1, 1, new string[] { "All" }, new int[] { 1 },
+            1, 1, new ItemTags[] { ItemTags.NONE }, new int[] { 1 },
             null // possibly make this determine lighting behavior
         );
         public static Item STICK = new Item(
-            "Stick", new List<string> { "" }, "Crafting material for tools and other things.", 1,
+            ItemTypes.STICK, new ItemTags[] { }, 1,
             '/', '/',
-            "DarkRed", "",
+            ConsoleColor.DarkRed, ConsoleColor.Black,
             false, true, true, 0,
-            1, 1, new string[] { "All" }, new int[] { 1 },
+            1, 1, new ItemTags[] { ItemTags.NONE }, new int[] { 1 },
             null
         );
         public static Item FLINT = new Item(
-            "Flint", new List<string> { "Axe" }, "Tool and crafting material.", 1,
+            ItemTypes.FLINT, new ItemTags[] { ItemTags.AXE }, 1,
             CharLibrary.triangle, CharLibrary.triangle,
-            "DarkGray", "",
+            ConsoleColor.DarkGray, ConsoleColor.Black,
             false, true, true, 0,
-            1, 5, new string[] { "All" }, new int[] { 1 },
+            1, 5, new ItemTags[] { ItemTags.NONE }, new int[] { 1 },
             null
         );
         public static Item FLINT_PICKAXE = new Item(
-            "Flint Pickaxe", new List<string> { "Tool", "Pickaxe" }, "Used for mining stone.", 1,
+            ItemTypes.FLINT_PICKAXE, new ItemTags[] { ItemTags.TOOL, ItemTags.PICKAXE }, 1,
             CharLibrary.pickaxe, CharLibrary.pickaxe,
-            "DarkGray", "",
+            ConsoleColor.DarkGray, ConsoleColor.Black,
             false, true, true, 0,
-            1, 5, new string[] { "All" }, new int[] { 1 },
+            1, 5, new ItemTags[] { ItemTags.NONE }, new int[] { 1 },
             null
         );
         public static Item MAGIC_WAND = new Item(
-            "Magic Wand", new List<string> { "" }, "It's a mystery.", 1,
+            ItemTypes.MAGIC_WAND, new ItemTags[] { }, 1,
             '/', '/',
-            "Magenta", "",
+            ConsoleColor.Magenta, ConsoleColor.Black,
             false, true, true, 0,
-            1, 1000, new string[] { "All" }, new int[] { 1 },
+            1, 1000, new ItemTags[] { ItemTags.NONE }, new int[] { 1 },
             (grid, gridCoordinate, player) => {
                 grid.Clear();
             }
@@ -225,6 +222,50 @@ namespace UnicodeCraft
             FLINT,
             FLINT_PICKAXE,
             MAGIC_WAND
+        };
+
+        public enum ItemTypes
+        {
+            AIR,
+            STONE,
+            COAL_ORE,
+            WOODEN_LOG,
+            TREE_LEAVES,
+            WOODEN_PLANK,
+            APPLE,
+            TORCH,
+            STICK,
+            FLINT,
+            FLINT_PICKAXE,
+            MAGIC_WAND
+        }
+
+        public enum ItemTags
+        {
+            NONE,
+            FOOD,
+            LIGHT_SOURCE,
+            TOOL,
+            AXE,
+            PICKAXE,
+            SWORD
+        }
+
+        // Item's name is used to retrieve the proper description when needed
+        public string[] ItemDescriptions =
+        {
+            "The absence of an item - can be moved through.", // Air
+            "Durable building block and crafting material.", // Stone
+            "Can be burned as a fuel source and to create light.", // Coal
+            "Can be used to make crafting materials.", // Wooden Log
+            "Can be walked under. Anything under the leaves will be concealed.", //Tree Leaves
+            "Building and crafting material.", // Wooden Plank
+            "Food item - can be used to restore satiation.", // Apple
+            "Used for lighting at night and in dark areas.", // Torch
+            "Crafting material for tools and other things.", // Stick
+            "Tool and crafting material.", // Flint
+            "Used for mining stone.", // Flint Pickaxe
+            "It's a mystery." // Magic Wand
         };
     }
 }

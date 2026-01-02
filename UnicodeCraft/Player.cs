@@ -117,15 +117,18 @@ namespace UnicodeCraft
             //Attacks item if not air
             else
             {
-                if(gridCoordinate.item.durability > 0)
+                if (gridCoordinate.item.durability > 0)
                 {
                     int totalDamage = inventory[inventoryPosition].damage;
                     for(int i = 0; i < gridCoordinate.item.toolsRequired.Length; i++)
                     {
-                        if(inventory[inventoryPosition].itemTags.Contains(gridCoordinate.item.toolsRequired[i]))
+                        for (int j = 0; j < inventory[inventoryPosition].itemTags.Length; j++)
                         {
-                            totalDamage *= gridCoordinate.item.damageBoosts[i];
-                            break;
+                            if (gridCoordinate.item.toolsRequired[i] == inventory[inventoryPosition].itemTags[j])
+                            {
+                                totalDamage *= gridCoordinate.item.damageBoosts[i];
+                                break;
+                            }
                         }
                     }
                     gridCoordinate.item.durability -= totalDamage;
