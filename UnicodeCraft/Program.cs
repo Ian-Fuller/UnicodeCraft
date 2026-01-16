@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 /*
 To-Do list:
-- (Almost done) Make the node destruction and placement happen in the grid class, as lambda expressions cannot recieve values by reference
-- Make it to where the player input handler doesn't use the gridCoordinate variable
+- Make bunny rabbits check for obstacles. They also need to check for grid presence, and there seems to be some sort of issue with picking them up and placing them
 - Consider adding a queue that keeps track of all the tiles that have changed so that only those tiles get reprinted each loop
 - When an items name is printed, it needs to be decapitalized, have the underscores replaced with spaces, and have the first letter of each word recapitalized
 - Add some more items and tools
 - Add zombies
 - Add concealment from zombie pathfinding while the player is under leaves
+- Leaves of adjecent trees sometimes don't spawn correctly
 */
 
 namespace UnicodeCraft
@@ -83,6 +83,7 @@ namespace UnicodeCraft
                         currentY--;
                     }
                 }
+                gridList[currentGrid].Tick();
                 timer.Tick(); //Ensures that time passes
             }
         }

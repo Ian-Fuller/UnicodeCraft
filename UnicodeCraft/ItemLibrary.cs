@@ -28,7 +28,7 @@ namespace UnicodeCraft
         public ItemLibrary.ItemTags[] toolsRequired;
         public int[] damageBoosts;
         //Action
-        public Action<Grid, int[], Player> action;
+        public Action<Grid, int[], Player, Item> action;
 
         public Item()
         {
@@ -41,7 +41,7 @@ namespace UnicodeCraft
             bool conceal, bool walkThrough, bool transparent,
             int lightLevel,
             int durability, int damage, ItemLibrary.ItemTags[] toolsRequired, int[] damageBoosts,
-            Action<Grid, int[], Player> action
+            Action<Grid, int[], Player, Item> action
         )
         {
             //Information
@@ -94,6 +94,8 @@ namespace UnicodeCraft
             damage = original.damage;
             toolsRequired = original.toolsRequired;
             damageBoosts = original.damageBoosts;
+            //Action
+            action = original.action;
         }
         //Displays item and changes colors beforehand
         public void DisplayItem()
@@ -208,14 +210,34 @@ namespace UnicodeCraft
             ConsoleColor.Magenta, ConsoleColor.Black,
             false, true, true, 0,
             1, 1000, new ItemTags[] { ItemTags.NONE }, new int[] { 1 },
-            (grid, target, player) => {
-                int[] direction = new int[] { target[0] - player.row, target[1] - player.column };
-                while (target[0] >= 0 && target[0] < Grid.GRID_HEIGHT && target[1] >= 0 && target[1] < Grid.GRID_WIDTH)
+            (grid, target, player, self) =>
+            {
+                if (player != null)
                 {
-                    grid.RemoveNode(target);
-                    target[0] += direction[0];
-                    target[1] += direction[1];
+                    int[] direction = new int[] { target[0] - player.row, target[1] - player.column };
+                    while (target[0] >= 0 && target[0] < Grid.GRID_HEIGHT && target[1] >= 0 && target[1] < Grid.GRID_WIDTH)
+                    {
+                        grid.RemoveNode(target);
+                        target[0] += direction[0];
+                        target[1] += direction[1];
+                    }
                 }
+            }
+        );
+        public static Item BUNNY_RABBIT = new Item(
+            ItemTypes.BUNNY_RABBIT, new ItemTags[] { ItemTags.NONE }, 1,
+            'v', 'v',
+            ConsoleColor.White, ConsoleColor.Black,
+            false, false, true, 0,
+            0, 1, new ItemTags[] { }, new int[] { 0 },
+            (grid, target, player, self) =>
+            {
+                Random rand = new Random();
+                int[] destination = new int[] { target[0] + rand.Next(-1, 1),  target[1] + rand.Next(-1, 1) };
+                grid.RemoveNode(target);
+                grid.PlaceNode(destination, self);
+
+                Console.WriteLine("Rabbit noise");
             }
         );
 
@@ -231,7 +253,8 @@ namespace UnicodeCraft
             STICK,
             FLINT,
             FLINT_PICKAXE,
-            MAGIC_WAND
+            MAGIC_WAND,
+            BUNNY_RABBIT
         };
 
         public enum ItemTypes
@@ -247,7 +270,8 @@ namespace UnicodeCraft
             STICK,
             FLINT,
             FLINT_PICKAXE,
-            MAGIC_WAND
+            MAGIC_WAND,
+            BUNNY_RABBIT
         }
 
         public enum ItemTags

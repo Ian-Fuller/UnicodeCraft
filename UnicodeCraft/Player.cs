@@ -32,7 +32,7 @@ namespace UnicodeCraft
             {
                 inventory[i] = ItemLibrary.AIR;
             }
-            inventory[0] = ItemLibrary.MAGIC_WAND;
+            inventory[inventory.Length - 1] = ItemLibrary.MAGIC_WAND;
         }
 
         public void SetStart()
@@ -96,20 +96,20 @@ namespace UnicodeCraft
             }
         }
 
-        public void Action(ref Grid gameGrid, ref Node gridCoordinate, int[] target)
+        public void Action(ref Grid gameGrid, int[] target)
         {
             //Uses the item's action ability if it has one
             if (inventory[inventoryPosition].action != null)
             {
-                inventory[inventoryPosition].action(gameGrid, target, this);
+                inventory[inventoryPosition].action(gameGrid, target, this, null);
             }
             //Places item if air
-            else if (gridCoordinate.item.itemName == ItemLibrary.AIR.itemName)
+            else if (gameGrid.ItemAt(target).itemName == ItemLibrary.AIR.itemName)
             {
-                //gameGrid.PlaceNode(target, )
+                Item newItem = new Item();
+                newItem.GetCopyOf(inventory[inventoryPosition]);
+                gameGrid.PlaceNode(target, newItem);
 
-                gridCoordinate.item = new Item();
-                gridCoordinate.item.GetCopyOf(inventory[inventoryPosition]);
                 inventory[inventoryPosition].itemQuantity--;
                 if (inventory[inventoryPosition].itemQuantity <= 0)
                 {
@@ -120,13 +120,13 @@ namespace UnicodeCraft
             else
             {
                 int totalDamage = inventory[inventoryPosition].damage;
-                for (int i = 0; i < gridCoordinate.item.toolsRequired.Length; i++)
+                for (int i = 0; i < gameGrid.ItemAt(target).toolsRequired.Length; i++)
                 {
                     for (int j = 0; j < inventory[inventoryPosition].itemTags.Length; j++)
                     {
-                        if (gridCoordinate.item.toolsRequired[i] == inventory[inventoryPosition].itemTags[j])
+                        if (gameGrid.ItemAt(target).toolsRequired[i] == inventory[inventoryPosition].itemTags[j])
                         {
-                            totalDamage *= gridCoordinate.item.damageBoosts[i];
+                            totalDamage *= gameGrid.ItemAt(target).damageBoosts[i];
                             break;
                         }
                     }
@@ -141,38 +141,38 @@ namespace UnicodeCraft
             if (!inInventory && !inCraftingMenu)
             {
                 //movement
-                if (inputKey == 'w' && gameGrid.gridCoordinate[row - 1, column].item.walkThrough)
+                if (inputKey == 'w' && gameGrid.ItemAt(new int[] { row - 1, column }).walkThrough)
                 {
                     row--;
                 }
-                else if (inputKey == 'a' && gameGrid.gridCoordinate[row, column - 1].item.walkThrough)
+                else if (inputKey == 'a' && gameGrid.ItemAt(new int[] { row, column - 1 }).walkThrough)
                 {
                     column--;
                 }
-                else if (inputKey == 's' && gameGrid.gridCoordinate[row + 1, column].item.walkThrough)
+                else if (inputKey == 's' && gameGrid.ItemAt(new int[] { row + 1, column }).walkThrough)
                 {
                     row++;
                 }
-                else if (inputKey == 'd' && gameGrid.gridCoordinate[row, column + 1].item.walkThrough)
+                else if (inputKey == 'd' && gameGrid.ItemAt(new int[] { row, column + 1 }).walkThrough)
                 {
                     column++;
                 }
                 //block destruction/placement
                 else if (inputKey == 'i')
                 {
-                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row - 1, column], new int[] { row - 1, column });
+                    Action(ref gameGrid, new int[] { row - 1, column });
                 }
                 else if (inputKey == 'j')
                 {
-                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row, column - 1], new int[] { row, column - 1 });
+                    Action(ref gameGrid, new int[] { row, column - 1 });
                 }
                 else if (inputKey == 'k')
                 {
-                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row + 1, column], new int[] { row + 1, column });
+                    Action(ref gameGrid, new int[] { row + 1, column });
                 }
                 else if (inputKey == 'l')
                 {
-                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row, column + 1], new int[] { row, column + 1 });
+                    Action(ref gameGrid, new int[] { row, column + 1 });
                 }
                 else if (inputKey == 'e')
                 {

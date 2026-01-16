@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace UnicodeCraft
@@ -27,6 +28,8 @@ namespace UnicodeCraft
         public const int GRID_WIDTH = 43; //--                 //Default 43
         public Node[,] topLayer = new Node[GRID_HEIGHT, GRID_WIDTH]; //Used for additional visual and mechanical effects
         public Node[,] gridCoordinate = new Node[GRID_HEIGHT, GRID_WIDTH]; //The grid itself
+
+        public List<Node> actionNodes = new List<Node>();
 
         public int[,] adjacencyOffsets = new int[4, 2]
         {
@@ -96,9 +99,13 @@ namespace UnicodeCraft
                     {
                         gridCoordinate[row, column].item.GetCopyOf(ItemLibrary.WOODEN_LOG);
                     }
-                    else if ((r >= 99 && r < 100) && !gridCoordinate[row, column].isBorder && (row != player.row || column != player.column))
+                    else if ((r >= 98 && r < 99) && !gridCoordinate[row, column].isBorder && (row != player.row || column != player.column))
                     {
                         gridCoordinate[row, column].item.GetCopyOf(ItemLibrary.FLINT);
+                    }
+                    else if ((r >= 99 && r < 100) && !gridCoordinate[row, column].isBorder && (row != player.row || column != player.column))
+                    {
+                        gridCoordinate[row, column].item.GetCopyOf(ItemLibrary.BUNNY_RABBIT);
                     }
                     else //places air
                     {
@@ -106,6 +113,11 @@ namespace UnicodeCraft
                     }
                 }
             }
+        }
+
+        public Item ItemAt(int[] coordinates)
+        {
+            return gridCoordinate[coordinates[0], coordinates[1]].item;
         }
 
         //Checks is player is on the border so the game knows when to put the player in a different/new map
@@ -357,12 +369,20 @@ namespace UnicodeCraft
 
         public void PlaceNode(int[] coordinates, Item nodeType)
         {
-            gridCoordinate[coordinates[0], coordinates[1]].item = nodeType;
+            try
+            {
+                gridCoordinate[coordinates[0], coordinates[1]].item = nodeType;
+            }
+            catch (IndexOutOfRangeException) { }
         }
 
         public void RemoveNode(int[] coordinates)
         {
-            gridCoordinate[coordinates[0], coordinates[1]].item = ItemLibrary.AIR;
+            try
+            {
+                gridCoordinate[coordinates[0], coordinates[1]].item = ItemLibrary.AIR;
+            }
+            catch (IndexOutOfRangeException) { }
         }
 
         public Item DamageNode(int[] coordinates, int damage)
@@ -385,6 +405,22 @@ namespace UnicodeCraft
                 for (int column = 0; column < GRID_WIDTH; column++)
                 {
                     gridCoordinate[row, column].item.GetCopyOf(ItemLibrary.AIR);
+                }
+            }
+        }
+
+        public void Tick()
+        {
+            for (int row = 0; row < GRID_HEIGHT; row++)
+            {
+                for (int column = 0; column < GRID_WIDTH; column++)
+                {
+                    int[] coordinate = new int[] { row, column };
+                    Item currentItem = ItemAt(coordinate);
+                    if (currentItem.action != null)
+                    {
+                        currentItem.action(this, coordinate, null, currentItem);
+                    }
                 }
             }
         }
