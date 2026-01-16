@@ -96,16 +96,18 @@ namespace UnicodeCraft
             }
         }
 
-        public void Action(ref Grid gameGrid, ref Node gridCoordinate)
+        public void Action(ref Grid gameGrid, ref Node gridCoordinate, int[] target)
         {
             //Uses the item's action ability if it has one
             if (inventory[inventoryPosition].action != null)
             {
-                inventory[inventoryPosition].action(gameGrid, gridCoordinate, this);
+                inventory[inventoryPosition].action(gameGrid, target, this);
             }
             //Places item if air
             else if (gridCoordinate.item.itemName == ItemLibrary.AIR.itemName)
             {
+                //gameGrid.PlaceNode(target, )
+
                 gridCoordinate.item = new Item();
                 gridCoordinate.item.GetCopyOf(inventory[inventoryPosition]);
                 inventory[inventoryPosition].itemQuantity--;
@@ -117,38 +119,20 @@ namespace UnicodeCraft
             //Attacks item if not air
             else
             {
-                if (gridCoordinate.item.durability > 0)
+                int totalDamage = inventory[inventoryPosition].damage;
+                for (int i = 0; i < gridCoordinate.item.toolsRequired.Length; i++)
                 {
-                    int totalDamage = inventory[inventoryPosition].damage;
-                    for(int i = 0; i < gridCoordinate.item.toolsRequired.Length; i++)
+                    for (int j = 0; j < inventory[inventoryPosition].itemTags.Length; j++)
                     {
-                        for (int j = 0; j < inventory[inventoryPosition].itemTags.Length; j++)
+                        if (gridCoordinate.item.toolsRequired[i] == inventory[inventoryPosition].itemTags[j])
                         {
-                            if (gridCoordinate.item.toolsRequired[i] == inventory[inventoryPosition].itemTags[j])
-                            {
-                                totalDamage *= gridCoordinate.item.damageBoosts[i];
-                                break;
-                            }
-                        }
-                    }
-                    gridCoordinate.item.durability -= totalDamage;
-                }
-                if (gridCoordinate.item.durability <= 0)
-                {
-                    for(int i = 0; i < ItemLibrary.FullList.Length; i++)
-                    {
-                        if(ItemLibrary.FullList[i].itemName == gridCoordinate.item.itemName)
-                        {
-                            GiveItem(ItemLibrary.FullList[i], 100, 1);
-                            if(gridCoordinate.item.itemName == ItemLibrary.WOODEN_LOG.itemName)
-                            {
-                                GiveItem(ItemLibrary.APPLE, 33, 1);
-                            }
+                            totalDamage *= gridCoordinate.item.damageBoosts[i];
                             break;
                         }
                     }
-                    gridCoordinate.item = ItemLibrary.AIR; //Sets item to air
                 }
+                Item drop = gameGrid.DamageNode(target, totalDamage);
+                GiveItem(drop, 100, 1);
             }
         }
 
@@ -176,19 +160,19 @@ namespace UnicodeCraft
                 //block destruction/placement
                 else if (inputKey == 'i')
                 {
-                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row - 1, column]);
+                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row - 1, column], new int[] { row - 1, column });
                 }
                 else if (inputKey == 'j')
                 {
-                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row, column - 1]);
+                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row, column - 1], new int[] { row, column - 1 });
                 }
                 else if (inputKey == 'k')
                 {
-                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row + 1, column]);
+                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row + 1, column], new int[] { row + 1, column });
                 }
                 else if (inputKey == 'l')
                 {
-                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row, column + 1]);
+                    Action(ref gameGrid, ref gameGrid.gridCoordinate[row, column + 1], new int[] { row, column + 1 });
                 }
                 else if (inputKey == 'e')
                 {

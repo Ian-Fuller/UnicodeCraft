@@ -365,17 +365,18 @@ namespace UnicodeCraft
             gridCoordinate[coordinates[0], coordinates[1]].item = ItemLibrary.AIR;
         }
 
-        //public Item DamageNode(int[] coordinates, int damage)
-        //{
-        //    gridCoordinate[coordinates[0], coordinates[1]].item.durability -= damage;
-        //    if (gridCoordinate[coordinates[0], coordinates[1]].item.durability <= 0)
-        //    {
-                
-        //        gridCoordinate[coordinates[0], coordinates[1]].item = ItemLibrary.AIR;
-        //        return 
-        //    }
-        //    return ItemLibrary.AIR;
-        //}
+        public Item DamageNode(int[] coordinates, int damage)
+        {
+            gridCoordinate[coordinates[0], coordinates[1]].item.durability -= damage;
+            if (gridCoordinate[coordinates[0], coordinates[1]].item.durability <= 0)
+            {
+                Item drop = new Item();
+                drop.GetCopyOf(gridCoordinate[coordinates[0], coordinates[1]].item);
+                gridCoordinate[coordinates[0], coordinates[1]].item = ItemLibrary.AIR;
+                return drop;
+            }
+            return ItemLibrary.AIR;
+        }
 
         public void Clear()
         {

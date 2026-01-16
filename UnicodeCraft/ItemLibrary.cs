@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace UnicodeCraft
@@ -27,7 +28,7 @@ namespace UnicodeCraft
         public ItemLibrary.ItemTags[] toolsRequired;
         public int[] damageBoosts;
         //Action
-        public Action<Grid, Node, Player> action;
+        public Action<Grid, int[], Player> action;
 
         public Item()
         {
@@ -40,7 +41,7 @@ namespace UnicodeCraft
             bool conceal, bool walkThrough, bool transparent,
             int lightLevel,
             int durability, int damage, ItemLibrary.ItemTags[] toolsRequired, int[] damageBoosts,
-            Action<Grid, Node, Player> action
+            Action<Grid, int[], Player> action
         )
         {
             //Information
@@ -70,6 +71,9 @@ namespace UnicodeCraft
         //Makes an item a copy of an item so they can be in a different state than the original
         public virtual void GetCopyOf(Item original)
         {
+            // Initialize properties (namely durability)
+            original = ItemLibrary.FullList.Where(item => item.itemName == original.itemName).First();
+
             //Information
             itemName = original.itemName;
             itemTags = original.itemTags;
@@ -204,8 +208,14 @@ namespace UnicodeCraft
             ConsoleColor.Magenta, ConsoleColor.Black,
             false, true, true, 0,
             1, 1000, new ItemTags[] { ItemTags.NONE }, new int[] { 1 },
-            (grid, gridCoordinate, player) => {
-                grid.Clear();
+            (grid, target, player) => {
+                int[] direction = new int[] { target[0] - player.row, target[1] - player.column };
+                while (target[0] >= 0 && target[0] < Grid.GRID_HEIGHT && target[1] >= 0 && target[1] < Grid.GRID_WIDTH)
+                {
+                    grid.RemoveNode(target);
+                    target[0] += direction[0];
+                    target[1] += direction[1];
+                }
             }
         );
 

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 
 /*
 To-Do list:
-- Make the node destruction and placement happen in the grid class, as lambda expressions cannot recieve values by reference
+- (Almost done) Make the node destruction and placement happen in the grid class, as lambda expressions cannot recieve values by reference
+- Make it to where the player input handler doesn't use the gridCoordinate variable
+- Consider adding a queue that keeps track of all the tiles that have changed so that only those tiles get reprinted each loop
 - When an items name is printed, it needs to be decapitalized, have the underscores replaced with spaces, and have the first letter of each word recapitalized
 - Add some more items and tools
 - Add zombies
