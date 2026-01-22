@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 /*
 To-Do list:
-- Make bunny rabbits check for obstacles. They also need to check for grid presence, and there seems to be some sort of issue with picking them up and placing them
+- Add javelins, a ranged weapon that travels until it hits something, and acts as a melee weapon at point-blank range. Icon will change depending on direction, but this will be handled in its action
 - Consider adding a queue that keeps track of all the tiles that have changed so that only those tiles get reprinted each loop
-- When an items name is printed, it needs to be decapitalized, have the underscores replaced with spaces, and have the first letter of each word recapitalized
 - Add some more items and tools
 - Add zombies
 - Add concealment from zombie pathfinding while the player is under leaves
-- Leaves of adjecent trees sometimes don't spawn correctly
+- Leaves of adjacent trees sometimes don't spawn correctly
+- Materials required for crafting needs to be displayed
 */
 
 namespace UnicodeCraft

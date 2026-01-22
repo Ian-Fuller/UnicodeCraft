@@ -94,6 +94,10 @@ namespace UnicodeCraft
                         {
                             gridCoordinate[row, column].item.GetCopyOf(ItemLibrary.COAL_ORE);
                         }
+                        if (rand.Next(0, 100) < 5)
+                        {
+                            gridCoordinate[row, column].item.GetCopyOf(ItemLibrary.METAL_ORE);
+                        }
                     }
                     else if ((r >= 50 && r < 55) && !gridCoordinate[row, column].isBorder && (row != player.row || column != player.column)) //tree
                     {
@@ -117,7 +121,14 @@ namespace UnicodeCraft
 
         public Item ItemAt(int[] coordinates)
         {
-            return gridCoordinate[coordinates[0], coordinates[1]].item;
+            try
+            {
+                return gridCoordinate[coordinates[0], coordinates[1]].item;
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return null;
+            }
         }
 
         //Checks is player is on the border so the game knows when to put the player in a different/new map
@@ -316,7 +327,7 @@ namespace UnicodeCraft
                     $"Satiation: {player.satiation}%",
                     $"",
                     $"Current Item:",
-                    $"{player.inventory[player.inventoryPosition].itemName} x{player.inventory[player.inventoryPosition].itemQuantity}"
+                    $"{player.inventory[player.inventoryPosition].FormattedName()} x{player.inventory[player.inventoryPosition].itemQuantity}"
                 };
 
                 Console.BackgroundColor = ConsoleColor.Black;
@@ -339,7 +350,7 @@ namespace UnicodeCraft
 
                 if(row < CraftableItemsLibrary.FullList.Length)
                 {
-                    string outputString = $"{CraftableItemsLibrary.FullList[row].item.itemName} x{CraftableItemsLibrary.FullList[row].amount}";
+                    string outputString = $"{CraftableItemsLibrary.FullList[row].item.FormattedName()} x{CraftableItemsLibrary.FullList[row].amount}";
                     int extraSpaces = 20 - outputString.Length;
                     for(int i = 0; i < extraSpaces; i++)
                     {

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace UnicodeCraft
 {
@@ -112,6 +114,12 @@ namespace UnicodeCraft
                 Console.Write(gridIcon);
             }
         }
+
+        public string FormattedName()
+        {
+            TextInfo textInfo = Thread.CurrentThread.CurrentCulture.TextInfo;
+            return textInfo.ToTitleCase(itemName.ToString().ToLower().Replace('_', ' '));
+        }
     }
 
     public class ItemLibrary
@@ -134,8 +142,16 @@ namespace UnicodeCraft
         );
         public static Item COAL_ORE = new Item(
             ItemTypes.COAL_ORE, new ItemTags[] { }, 1,
-            CharLibrary.leavesThin, CharLibrary.leavesThin,
+            CharLibrary.square, CharLibrary.square,
             ConsoleColor.Black, ConsoleColor.Gray,
+            false, false, false, 0,
+            150, 15, new ItemTags[] { ItemTags.PICKAXE, ItemTags.AXE, ItemTags.SWORD }, new int[] { 10, 4, 2 },
+            null
+        );
+        public static Item METAL_ORE = new Item(
+            ItemTypes.METAL_ORE, new ItemTags[] { }, 1,
+            CharLibrary.square, CharLibrary.square,
+            ConsoleColor.Cyan, ConsoleColor.Gray,
             false, false, false, 0,
             150, 15, new ItemTags[] { ItemTags.PICKAXE, ItemTags.AXE, ItemTags.SWORD }, new int[] { 10, 4, 2 },
             null
@@ -196,10 +212,10 @@ namespace UnicodeCraft
             1, 5, new ItemTags[] { ItemTags.NONE }, new int[] { 1 },
             null
         );
-        public static Item FLINT_PICKAXE = new Item(
-            ItemTypes.FLINT_PICKAXE, new ItemTags[] { ItemTags.TOOL, ItemTags.PICKAXE }, 1,
+        public static Item PICKAXE = new Item(
+            ItemTypes.PICKAXE, new ItemTags[] { ItemTags.TOOL, ItemTags.PICKAXE }, 1,
             CharLibrary.pickaxe, CharLibrary.pickaxe,
-            ConsoleColor.DarkGray, ConsoleColor.Black,
+            ConsoleColor.Cyan, ConsoleColor.Black,
             false, true, true, 0,
             1, 5, new ItemTags[] { ItemTags.NONE }, new int[] { 1 },
             null
@@ -232,12 +248,16 @@ namespace UnicodeCraft
             0, 1, new ItemTags[] { }, new int[] { 0 },
             (grid, target, player, self) =>
             {
-                Random rand = new Random();
-                int[] destination = new int[] { target[0] + rand.Next(-1, 1),  target[1] + rand.Next(-1, 1) };
-                grid.RemoveNode(target);
-                grid.PlaceNode(destination, self);
-
-                Console.WriteLine("Rabbit noise");
+                if (grid != null)
+                {
+                    Random rand = new Random();
+                    int[] destination = new int[] { target[0] + rand.Next(-1, 1), target[1] + rand.Next(-1, 1) };
+                    if (grid.ItemAt(destination) != null && grid.ItemAt(destination).itemName == ItemTypes.AIR)
+                    {
+                        grid.RemoveNode(target);
+                        grid.PlaceNode(destination, self);
+                    }
+                }
             }
         );
 
@@ -245,6 +265,7 @@ namespace UnicodeCraft
             AIR,
             STONE,
             COAL_ORE,
+            METAL_ORE,
             WOODEN_LOG,
             TREE_LEAVES,
             WOODEN_PLANK,
@@ -252,7 +273,7 @@ namespace UnicodeCraft
             TORCH,
             STICK,
             FLINT,
-            FLINT_PICKAXE,
+            PICKAXE,
             MAGIC_WAND,
             BUNNY_RABBIT
         };
@@ -262,6 +283,7 @@ namespace UnicodeCraft
             AIR,
             STONE,
             COAL_ORE,
+            METAL_ORE,
             WOODEN_LOG,
             TREE_LEAVES,
             WOODEN_PLANK,
@@ -269,7 +291,7 @@ namespace UnicodeCraft
             TORCH,
             STICK,
             FLINT,
-            FLINT_PICKAXE,
+            PICKAXE,
             MAGIC_WAND,
             BUNNY_RABBIT
         }
