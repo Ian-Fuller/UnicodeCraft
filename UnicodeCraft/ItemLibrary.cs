@@ -240,6 +240,56 @@ namespace UnicodeCraft
                 }
             }
         );
+        public static Item JAVELIN = new Item(
+            ItemTypes.JAVELIN, new ItemTags[] { }, 1,
+            CharLibrary.upArrow, CharLibrary.upArrow,
+            ConsoleColor.DarkGray, ConsoleColor.Black,
+            false, true, true, 0,
+            1, 10, new ItemTags[] { ItemTags.NONE }, new int[] { 1 },
+            (grid, target, player, self) =>
+            {
+                if (player != null)
+                {
+                    if (grid.ItemAt(target).itemName != ItemTypes.AIR)
+                    {
+                        grid.DamageNode(target, self.damage);
+                    }
+                    else
+                    {
+                        int[] direction = new int[] { target[0] - player.row, target[1] - player.column };
+                        bool hit = false;
+                        while (!hit)
+                        {
+                            target[0] += direction[0];
+                            target[1] += direction[1];
+                            if (grid.ItemAt(target).itemName != ItemTypes.AIR && grid.ItemAt(target).itemName != ItemTypes.JAVELIN)
+                            {
+                                hit = true;
+                                grid.DamageNode(target, self.damage);
+                                target[0] -= direction[0];
+                                target[1] -= direction[1];
+                                Item newItem = new Item();
+                                newItem.GetCopyOf(self);
+                                if (direction[0] == 1)
+                                {
+                                    newItem.gridIcon = CharLibrary.downArrow;
+                                }
+                                else if (direction[1] == -1)
+                                {
+                                    newItem.gridIcon = CharLibrary.leftArrow;
+                                }
+                                else if (direction[1] == 1)
+                                {
+                                    newItem.gridIcon = CharLibrary.rightArrow;
+                                }
+                                grid.PlaceNode(target, newItem);
+                            }
+                        }
+                        player.TakeItem(self.itemName, 1);
+                    }
+                }
+            }
+        );
         public static Item BUNNY_RABBIT = new Item(
             ItemTypes.BUNNY_RABBIT, new ItemTags[] { ItemTags.NONE }, 1,
             'v', 'v',
@@ -275,6 +325,7 @@ namespace UnicodeCraft
             FLINT,
             PICKAXE,
             MAGIC_WAND,
+            JAVELIN,
             BUNNY_RABBIT
         };
 
@@ -293,6 +344,7 @@ namespace UnicodeCraft
             FLINT,
             PICKAXE,
             MAGIC_WAND,
+            JAVELIN,
             BUNNY_RABBIT
         }
 

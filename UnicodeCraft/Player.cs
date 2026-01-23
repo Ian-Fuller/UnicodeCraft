@@ -33,6 +33,9 @@ namespace UnicodeCraft
                 inventory[i] = ItemLibrary.AIR;
             }
             inventory[inventory.Length - 1] = ItemLibrary.MAGIC_WAND;
+            inventory[inventory.Length - 2] = ItemLibrary.JAVELIN;
+            inventory[inventory.Length - 2].itemQuantity = 10;
+
         }
 
         public void SetStart()
@@ -96,12 +99,30 @@ namespace UnicodeCraft
             }
         }
 
+        public void TakeItem(ItemLibrary.ItemTypes itemName, int amount)
+        {
+            if (itemName != ItemLibrary.ItemTypes.AIR)
+            {
+                for (int i = 0; i < inventory.Length; i++)
+                {
+                    if (inventory[i].itemName == itemName)
+                    {
+                        inventory[i].itemQuantity -= amount;
+                    }
+                    if (inventory[i].itemQuantity <= 0)
+                    {
+                        inventory[i].GetCopyOf(ItemLibrary.AIR);
+                    }
+                }
+            }
+        }
+
         public void Action(ref Grid gameGrid, int[] target)
         {
             //Uses the item's action ability if it has one
             if (inventory[inventoryPosition].action != null)
             {
-                inventory[inventoryPosition].action(gameGrid, target, this, null);
+                inventory[inventoryPosition].action(gameGrid, target, this, inventory[inventoryPosition]);
             }
             //Places item if air
             else if (gameGrid.ItemAt(target).itemName == ItemLibrary.AIR.itemName)
@@ -110,11 +131,7 @@ namespace UnicodeCraft
                 newItem.GetCopyOf(inventory[inventoryPosition]);
                 gameGrid.PlaceNode(target, newItem);
 
-                inventory[inventoryPosition].itemQuantity--;
-                if (inventory[inventoryPosition].itemQuantity <= 0)
-                {
-                    inventory[inventoryPosition].GetCopyOf(ItemLibrary.AIR);
-                }
+                TakeItem(inventory[inventoryPosition].itemName, 1);
             }
             //Attacks item if not air
             else
@@ -132,7 +149,7 @@ namespace UnicodeCraft
                     }
                 }
                 Item drop = gameGrid.DamageNode(target, totalDamage);
-                GiveItem(drop, 100, 1);
+                GiveItem(drop, 100, drop.itemQuantity);
             }
         }
 

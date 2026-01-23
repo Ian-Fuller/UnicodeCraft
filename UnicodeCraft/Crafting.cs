@@ -40,17 +40,23 @@ namespace UnicodeCraft
             ItemLibrary.TORCH, 4,
             new Item[] { ItemLibrary.STICK, ItemLibrary.COAL_ORE }, new int[] { 1, 1 }
         );
-        //Flint Pickaxe
+        //Pickaxe
         public static CraftableItem PICKAXE = new CraftableItem(
             ItemLibrary.PICKAXE, 1,
             new Item[] { ItemLibrary.STICK, ItemLibrary.METAL_ORE }, new int[] { 2, 3 }
+        );
+        //Pickaxe
+        public static CraftableItem JAVELIN = new CraftableItem(
+            ItemLibrary.JAVELIN, 1,
+            new Item[] { ItemLibrary.STICK, ItemLibrary.FLINT }, new int[] { 1, 1 }
         );
 
         public static CraftableItem[] FullList = {
             WOODEN_PLANK,
             STICK,
             TORCH,
-            PICKAXE
+            PICKAXE,
+            JAVELIN
         };
     }
 

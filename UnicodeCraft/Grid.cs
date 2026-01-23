@@ -382,7 +382,14 @@ namespace UnicodeCraft
         {
             try
             {
-                gridCoordinate[coordinates[0], coordinates[1]].item = nodeType;
+                if (gridCoordinate[coordinates[0], coordinates[1]].item.itemName == nodeType.itemName)
+                {
+                    gridCoordinate[coordinates[0], coordinates[1]].item.itemQuantity++;
+                }
+                else
+                {
+                    gridCoordinate[coordinates[0], coordinates[1]].item = nodeType;
+                }
             }
             catch (IndexOutOfRangeException) { }
         }
@@ -401,8 +408,10 @@ namespace UnicodeCraft
             gridCoordinate[coordinates[0], coordinates[1]].item.durability -= damage;
             if (gridCoordinate[coordinates[0], coordinates[1]].item.durability <= 0)
             {
+                int quantity = gridCoordinate[coordinates[0], coordinates[1]].item.itemQuantity;
                 Item drop = new Item();
                 drop.GetCopyOf(gridCoordinate[coordinates[0], coordinates[1]].item);
+                drop.itemQuantity = quantity;
                 gridCoordinate[coordinates[0], coordinates[1]].item = ItemLibrary.AIR;
                 return drop;
             }

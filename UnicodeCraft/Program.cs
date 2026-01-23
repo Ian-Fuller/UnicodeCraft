@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 /*
 To-Do list:
-- Add javelins, a ranged weapon that travels until it hits something, and acts as a melee weapon at point-blank range. Icon will change depending on direction, but this will be handled in its action
+- Javelins behave strangely upon colliding with one another
 - Consider adding a queue that keeps track of all the tiles that have changed so that only those tiles get reprinted each loop
 - Add some more items and tools
 - Add zombies
