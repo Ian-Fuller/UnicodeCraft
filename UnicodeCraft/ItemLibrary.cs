@@ -252,7 +252,8 @@ namespace UnicodeCraft
                 {
                     if (grid.ItemAt(target).itemName != ItemTypes.AIR)
                     {
-                        grid.DamageNode(target, self.damage);
+                        Item drop = grid.DamageNode(target, self.damage);
+                        player.GiveItem(drop, 100, drop.itemQuantity);
                     }
                     else
                     {
@@ -265,7 +266,8 @@ namespace UnicodeCraft
                             if (grid.ItemAt(target).itemName != ItemTypes.AIR && grid.ItemAt(target).itemName != ItemTypes.JAVELIN)
                             {
                                 hit = true;
-                                grid.DamageNode(target, self.damage);
+                                Item drop = grid.DamageNode(target, self.damage);
+                                player.GiveItem(drop, 100, drop.itemQuantity);
                                 target[0] -= direction[0];
                                 target[1] -= direction[1];
                                 Item newItem = new Item();

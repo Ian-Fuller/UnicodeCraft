@@ -30,12 +30,12 @@ namespace UnicodeCraft
             ItemLibrary itemList = new ItemLibrary();
             for (int i = 0; i < inventory.Length; i++)
             {
-                inventory[i] = ItemLibrary.AIR;
+                inventory[i] = new Item();
+                inventory[i].GetCopyOf(ItemLibrary.AIR);
             }
-            inventory[inventory.Length - 1] = ItemLibrary.MAGIC_WAND;
-            inventory[inventory.Length - 2] = ItemLibrary.JAVELIN;
+            inventory[inventory.Length - 1].GetCopyOf(ItemLibrary.MAGIC_WAND);
+            inventory[inventory.Length - 2].GetCopyOf(ItemLibrary.JAVELIN);
             inventory[inventory.Length - 2].itemQuantity = 10;
-
         }
 
         public void SetStart()
