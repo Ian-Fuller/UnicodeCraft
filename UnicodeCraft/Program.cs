@@ -9,6 +9,7 @@ To-Do list:
 - Add concealment from zombie pathfinding while the player is under leaves
 - Leaves of adjacent trees sometimes don't spawn correctly
 - Materials required for crafting needs to be displayed
+- UI also generally needs a lot of improvements
 */
 
 namespace UnicodeCraft

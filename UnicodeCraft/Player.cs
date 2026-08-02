@@ -117,10 +117,10 @@ namespace UnicodeCraft
             }
         }
 
-        public void Action(ref Grid gameGrid, int[] target)
+        public void Action(ref Grid gameGrid, int[] target, bool ignoreAbility)
         {
             //Uses the item's action ability if it has one
-            if (inventory[inventoryPosition].action != null)
+            if (inventory[inventoryPosition].action != null && !ignoreAbility)
             {
                 inventory[inventoryPosition].action(gameGrid, target, this, inventory[inventoryPosition]);
             }
@@ -177,19 +177,36 @@ namespace UnicodeCraft
                 //block destruction/placement
                 else if (inputKey == 'i')
                 {
-                    Action(ref gameGrid, new int[] { row - 1, column });
+                    Action(ref gameGrid, new int[] { row - 1, column }, false);
                 }
                 else if (inputKey == 'j')
                 {
-                    Action(ref gameGrid, new int[] { row, column - 1 });
+                    Action(ref gameGrid, new int[] { row, column - 1 }, false);
                 }
                 else if (inputKey == 'k')
                 {
-                    Action(ref gameGrid, new int[] { row + 1, column });
+                    Action(ref gameGrid, new int[] { row + 1, column }, false);
                 }
                 else if (inputKey == 'l')
                 {
-                    Action(ref gameGrid, new int[] { row, column + 1 });
+                    Action(ref gameGrid, new int[] { row, column + 1 }, false);
+                }
+                //block destruction/placement (ignore ability)
+                else if (inputKey == 'I')
+                {
+                    Action(ref gameGrid, new int[] { row - 1, column }, true);
+                }
+                else if (inputKey == 'J')
+                {
+                    Action(ref gameGrid, new int[] { row, column - 1 }, true);
+                }
+                else if (inputKey == 'K')
+                {
+                    Action(ref gameGrid, new int[] { row + 1, column }, true);
+                }
+                else if (inputKey == 'L')
+                {
+                    Action(ref gameGrid, new int[] { row, column + 1 }, true);
                 }
                 else if (inputKey == 'e')
                 {

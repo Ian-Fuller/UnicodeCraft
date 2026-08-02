@@ -263,13 +263,37 @@ namespace UnicodeCraft
                         {
                             target[0] += direction[0];
                             target[1] += direction[1];
-                            if (grid.ItemAt(target).itemName != ItemTypes.AIR && grid.ItemAt(target).itemName != ItemTypes.JAVELIN)
+                            if (grid.ItemAt(target) != null)
+                            {
+                                if (grid.ItemAt(target).itemName != ItemTypes.AIR && grid.ItemAt(target).itemName != ItemTypes.JAVELIN)
+                                {
+                                    hit = true;
+                                    Item drop = grid.DamageNode(target, self.damage);
+                                    player.GiveItem(drop, 100, drop.itemQuantity);
+                                    target[0] -= direction[0];
+                                    target[1] -= direction[1];
+                                    Item newItem = new Item();
+                                    newItem.GetCopyOf(self);
+                                    if (direction[0] == 1)
+                                    {
+                                        newItem.gridIcon = CharLibrary.downArrow;
+                                    }
+                                    else if (direction[1] == -1)
+                                    {
+                                        newItem.gridIcon = CharLibrary.leftArrow;
+                                    }
+                                    else if (direction[1] == 1)
+                                    {
+                                        newItem.gridIcon = CharLibrary.rightArrow;
+                                    }
+                                    grid.PlaceNode(target, newItem);
+                                }
+                            }
+                            else //Javelin hit border
                             {
                                 hit = true;
-                                Item drop = grid.DamageNode(target, self.damage);
-                                player.GiveItem(drop, 100, drop.itemQuantity);
-                                target[0] -= direction[0];
-                                target[1] -= direction[1];
+                                target[0] -= direction[0] * 2;
+                                target[1] -= direction[1] * 2;
                                 Item newItem = new Item();
                                 newItem.GetCopyOf(self);
                                 if (direction[0] == 1)
