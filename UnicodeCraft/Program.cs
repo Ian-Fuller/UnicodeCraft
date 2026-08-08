@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 /*
 To-Do list:
+- UI class and main grid display function need to be overhauled to be easier to code
+- The materials required menu should expand/shrink depending on how many materials are needed
+- Craftable items menu needs to be scrollable, but that isn't needed right now since there isn't much to craft
 - Consider adding a queue that keeps track of all the tiles that have changed so that only those tiles get reprinted each loop
 - Add some more items and tools
 - Add zombies

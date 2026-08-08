@@ -346,7 +346,15 @@ namespace UnicodeCraft
                 {
                     Console.Write("                    ");
                 }
-                Console.Write(CharLibrary.vertical);
+                
+                if (row == 17)
+                {
+                    Console.Write(CharLibrary.verticalRight);
+                }
+                else
+                {
+                    Console.Write(CharLibrary.vertical);
+                }
 
                 if(row < CraftableItemsLibrary.FullList.Length)
                 {
@@ -358,15 +366,31 @@ namespace UnicodeCraft
                     }
                     Console.Write(outputString);
                 }
+                else if (row == 16)
+                {
+                    Console.Write("Materials Required: ");
+                }
+                else if (row == 17)
+                {
+                    for (int i = 0; i < 20; i++)
+                    {
+                        Console.Write(CharLibrary.horizontal);
+                    }
+                }
                 else
                 {
                     Console.Write("                    ");
                 }
+
                 if (row == player.craftingPosition)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.Write($"{CharLibrary.leftArrow}\n");
                     Console.ForegroundColor = ConsoleColor.Gray;
+                }
+                else if (row == 17)
+                {
+                    Console.Write($"{CharLibrary.verticalLeft}\n");
                 }
                 else
                 {
